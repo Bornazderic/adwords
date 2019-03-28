@@ -27,12 +27,16 @@ class HomeController extends Controller
      */
     public function index()
     {
+        return view('home');
+    }
 
+    public function arrayCreate()
+    {
         $page = 1;
         $products = [];
         $all_products = [];
         $finished_array = [];
-        $counter = 0;
+        $counter = 1;
         do{
         try {
           
@@ -45,6 +49,8 @@ class HomeController extends Controller
         $page++;
         } while (count($products) > 0);
 
+        $header = array('ID','ID2','Item Title','Final URL','Image URL from subtitle','Item Description','Item Category','Price','Sale Price'); //header
+        $finished_array[0] = $header;
         foreach($all_products as $product)
         {
             
@@ -60,13 +66,12 @@ class HomeController extends Controller
             $counter = $counter + 1;
         }
 
-        //return $all_products;
         return $this->export($finished_array);
-
     }
 
     public function export($finished_array)
     {
+
         $export = new UsersExport([
             $finished_array
         ]);

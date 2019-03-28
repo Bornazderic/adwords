@@ -16,6 +16,8 @@
 
                     You are logged in!
                 </div>
+
+                <a href="{{route('download')}}" class="btn btn-primary">ISPISI</a>
             </div>
         </div>
     </div>

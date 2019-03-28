@@ -19,19 +19,9 @@ class UsersExport implements FromArray, WithHeadingRow
         $this->invoices = $invoices;
     }
 
-    public function headings(): array
-    {
-        return [
-            '#',
-            'Name',
-            'Email',
-            'Created at',
-            'Updated at'
-        ];
-    }
-    
     public function array(): array
     {
         return $this->invoices;
     }
+
 }
