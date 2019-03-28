@@ -27,6 +27,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        //$kategorije = Woocommerce::get('product_cat');
+        //dd($kategorije);
         return view('home');
     }
 
@@ -59,7 +61,7 @@ class HomeController extends Controller
             $finished_array[$counter][] = $product["name"];
             $finished_array[$counter][] = $product["permalink"];
             $finished_array[$counter][] = collect($product["images"])->first()["src"];
-            $finished_array[$counter][] = $product["description"];
+            $finished_array[$counter][] = strip_tags($product["description"]);
             $finished_array[$counter][] = collect($product["categories"])->first()["name"];
             $finished_array[$counter][] = $product["price"];
             $finished_array[$counter][] = $product["sale_price"];
