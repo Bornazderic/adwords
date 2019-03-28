@@ -26,12 +26,42 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {
-        return view('home');
+    {   
+       // $pick = '';
+        $categories = [
+            'Začini i umaci',
+            'Nekategorizirane',
+            'illy šalice i čaše',
+            'Aparati i uređaji za pripremu kave',
+            'Čajevi Dammann Freres',
+            'Pribor, accessories',
+            'Kava illy',
+            'Sirupi',
+            'Ulje',
+            'Brašno',
+            'Šećer',
+            'Začini',
+            'Umaci',
+            'Ocat',
+            'Začini i umaci',
+            'Čokolada',
+            'Čaj u kristalnim vrećicama',
+            'Agrimontana',
+            'Džemovi i namazi',
+            'Alkoholna pića',
+            'Med',
+            'Senfovi',
+
+        ];
+        return view('index', [
+            'categories' => $categories
+        ]);
     }
 
     public function arrayCreate()
-    {
+    {   
+
+        $category = 'Sirupi';
         $page = 1;
         $products = [];
         $all_products = [];
@@ -53,13 +83,18 @@ class HomeController extends Controller
         $finished_array[0] = $header;
         foreach($all_products as $product)
         {
-            
+            //if ($category == $product['categories']){
+               
+               // $finished_array = Woocommerce::get('products')->where($product['categories'] , '=' ,$category);
+                var_dump($product['categories']);
+                
+          //  }
             $finished_array[$counter][] = $product["id"];
             $finished_array[$counter][] = null;
             $finished_array[$counter][] = $product["name"];
             $finished_array[$counter][] = $product["permalink"];
             $finished_array[$counter][] = collect($product["images"])->first()["src"];
-            $finished_array[$counter][] = $product["description"];
+            $finished_array[$counter][] = strip_tags($product["description"]);
             $finished_array[$counter][] = collect($product["categories"])->first()["name"];
             $finished_array[$counter][] = $product["price"];
             $finished_array[$counter][] = $product["sale_price"];
