@@ -7,9 +7,9 @@
             {{csrf_field()}}
 
             <select name="category">
-                @for ($i = 0 ; $i < count($categories) ; $i++)
-            <option value={{$categories[$i]}}>{{$categories[$i]}}</option>
-                @endfor
+             @foreach ($categories as $category )
+                 <option value={{$category['name']}}>{{$category['name']}}</option>
+             @endforeach
             </select>
             <input type="submit" value="Send">
         </form>

@@ -30,32 +30,9 @@ class HomeController extends Controller
     {
         //return view('home');
 
-        $categories = [
-            'Sve',
-            'Začini i umaci',
-            'Nekategorizirane',
-            'illy šalice i čaše',
-            'Aparati i uređaji za pripremu kave',
-            'Čajevi Dammann Freres',
-            'Pribor, accessories',
-            'Kava illy',
-            'Sirupi',
-            'Ulje',
-            'Brašno',
-            'Šećer',
-            'Začini',
-            'Umaci',
-            'Ocat',
-            'Začini i umaci',
-            'Čokolada',
-            'Čaj u kristalnim vrećicama',
-            'Agrimontana',
-            'Džemovi i namazi',
-            'Alkoholna pića',
-            'Med',
-            'Senfovi',
+        $categories = Woocommerce::get('products/categories', ['per_page' => 100]);
 
-        ];
+ 
         return view('index', [
             'categories' => $categories
         ]);
@@ -64,9 +41,6 @@ class HomeController extends Controller
 
     public function arrayCreate(Request $request)
     {   
-
-        //return $products = Woocommerce::get('products/categories', ['per_page' => 100]);
-
 
         $page = 1;
         $products = [];
@@ -105,7 +79,7 @@ class HomeController extends Controller
             else continue;
         }
 
-        return $this->export($finished_array);
+        //return $this->export($finished_array);
     }
 
     public function export($finished_array)
