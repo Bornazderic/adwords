@@ -26,14 +26,48 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
+
     {
-        //$kategorije = Woocommerce::get('product_cat');
-        //dd($kategorije);
-        return view('home');
+        //return view('home');
+
+        $categories = [
+            'Sve',
+            'Začini i umaci',
+            'Nekategorizirane',
+            'illy šalice i čaše',
+            'Aparati i uređaji za pripremu kave',
+            'Čajevi Dammann Freres',
+            'Pribor, accessories',
+            'Kava illy',
+            'Sirupi',
+            'Ulje',
+            'Brašno',
+            'Šećer',
+            'Začini',
+            'Umaci',
+            'Ocat',
+            'Začini i umaci',
+            'Čokolada',
+            'Čaj u kristalnim vrećicama',
+            'Agrimontana',
+            'Džemovi i namazi',
+            'Alkoholna pića',
+            'Med',
+            'Senfovi',
+
+        ];
+        return view('index', [
+            'categories' => $categories
+        ]);
+
     }
 
-    public function arrayCreate()
-    {
+    public function arrayCreate(Request $request)
+    {   
+
+        //return $products = Woocommerce::get('products/categories', ['per_page' => 100]);
+
+
         $page = 1;
         $products = [];
         $all_products = [];
@@ -55,17 +89,20 @@ class HomeController extends Controller
         $finished_array[0] = $header;
         foreach($all_products as $product)
         {
-            
-            $finished_array[$counter][] = $product["id"];
-            $finished_array[$counter][] = null;
-            $finished_array[$counter][] = $product["name"];
-            $finished_array[$counter][] = $product["permalink"];
-            $finished_array[$counter][] = collect($product["images"])->first()["src"];
-            $finished_array[$counter][] = strip_tags($product["description"]);
-            $finished_array[$counter][] = collect($product["categories"])->first()["name"];
-            $finished_array[$counter][] = $product["price"];
-            $finished_array[$counter][] = $product["sale_price"];
-            $counter = $counter + 1;
+            if($request->category == collect($product["categories"])->first()["name"] || $request->category == 'Sve')
+            {
+                $finished_array[$counter][] = $product["id"];
+                $finished_array[$counter][] = null;
+                $finished_array[$counter][] = $product["name"];
+                $finished_array[$counter][] = $product["permalink"];
+                $finished_array[$counter][] = collect($product["images"])->first()["src"];
+                $finished_array[$counter][] = strip_tags($product["description"]);
+                $finished_array[$counter][] = collect($product["categories"])->first()["name"];
+                $finished_array[$counter][] = $product["price"];
+                $finished_array[$counter][] = $product["sale_price"];
+                $counter = $counter + 1;
+            }
+            else continue;
         }
 
         return $this->export($finished_array);
