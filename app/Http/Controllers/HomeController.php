@@ -28,20 +28,27 @@ class HomeController extends Controller
     public function index()
 
     {
-        //return view('home');
-
+ 
         $categories = Woocommerce::get('products/categories', ['per_page' => 100]);
+        $status = ['any','draft','pending','private','publish'];
+        $stock = ['instock','outofstock','onbackorder'];
+        $types = ['xlsx', 'csv', 'tsv', 'xls', 'html'];
+        usort($categories,function($a,$b) {return strnatcasecmp($a['name'],$b['name']);});
+
+        //return $categories;
 
  
         return view('index', [
-            'categories' => $categories
+            'categories' => $categories,
+            'status' => $status,
+            'stock' => $stock,
+            'types' => $types
         ]);
 
     }
 
     public function arrayCreate(Request $request)
     {   
-
         $page = 1;
         $products = [];
         $all_products = [];
@@ -50,8 +57,7 @@ class HomeController extends Controller
         do{
         try {
           
-            $products = Woocommerce::get('products', ['per_page' => 100, 'page' => $page]);
-
+            $products = Woocommerce::get('products', ['per_page' => 100, 'page' => $page, 'status' => $request->status, 'stock_status' => $request->stock]); //category = request cat
         }catch(HttpClientException $e){
             die("Can't get products: $e");
         }
@@ -61,9 +67,10 @@ class HomeController extends Controller
 
         $header = array('ID','ID2','Item Title','Final URL','Image URL from subtitle','Item Description','Item Category','Price','Sale Price'); //header
         $finished_array[0] = $header;
+
         foreach($all_products as $product)
         {
-            if($request->category == collect($product["categories"])->first()["name"] || $request->category == 'Sve')
+            if($request->category == collect($product["categories"])->first()["name"] || $request->category == 'All')
             {
                 $finished_array[$counter][] = $product["id"];
                 $finished_array[$counter][] = null;
@@ -78,17 +85,18 @@ class HomeController extends Controller
             }
             else continue;
         }
+        //return $finished_array;
 
-        //return $this->export($finished_array);
+        return $this->export($finished_array,$request->type);
     }
 
-    public function export($finished_array)
-    {
-
+    public function export($finished_array,$request)
+    {    
+        $extension = $request;
         $export = new UsersExport([
             $finished_array
         ]);
     
-        return Excel::download($export, 'invoices.xlsx');
+        return Excel::download($export, 'invoices.'.$extension);
     }
 }
