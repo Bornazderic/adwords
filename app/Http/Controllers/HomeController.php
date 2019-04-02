@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Exports;
 use Woocommerce;
 use App\Exports\UsersExport;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -28,7 +32,7 @@ class HomeController extends Controller
     public function index()
 
     {
- 
+        $exports = Exports::all();
         $categories = Woocommerce::get('products/categories', ['per_page' => 100]);
         $status = ['any','draft','pending','private','publish'];
         $stock = ['instock','outofstock','onbackorder'];
@@ -39,6 +43,7 @@ class HomeController extends Controller
 
  
         return view('index', [
+            'exports' => $exports,
             'categories' => $categories,
             'status' => $status,
             'stock' => $stock,
@@ -87,16 +92,31 @@ class HomeController extends Controller
         }
         //return $finished_array;
 
-        return $this->export($finished_array,$request->type);
+        Exports::create([
+            'user_id' => Auth::user()->id,
+            'date' => Carbon::now()->toDateString(),
+            'time' => Carbon::now()->toTimeString(),
+            'file_name' => $request->category.Carbon::now().'.'.$request->type,
+            'type' => $request->type
+        ]);
+        return $this->export($finished_array,$request);
     }
 
     public function export($finished_array,$request)
     {    
-        $extension = $request;
+        $extension = $request->type;
         $export = new UsersExport([
             $finished_array
         ]);
     
-        return Excel::download($export, 'invoices.'.$extension);
+    
+        Excel::store($export,$request->category.Carbon::now().'.'.$extension);
+        return $this->index();
+    }
+
+    public function delete($id)
+    {
+       Exports::findOrFail($id)->destroy($id);
+       return redirect()->route('index', ['success' => 'kurcinaaaaaaaa']);
     }
 }
