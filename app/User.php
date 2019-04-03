@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Exports::class);
     }
+
+    public function site()
+    {
+        return $this->hasMany(Site::class);
+    }
 }

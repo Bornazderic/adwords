@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateExportsTable extends Migration
+class CreateSiteTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateExportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('exports', function (Blueprint $table) {
+        Schema::create('sites', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('file_name');
-            $table->string('category');
-            $table->string('status');
-            $table->string('type');
-            $table->string('stock');
+            $table->string('name');
+            $table->string('store_url');
+            $table->text('consumer_key');
+            $table->text('consumer_secret');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 
@@ -34,6 +34,6 @@ class CreateExportsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exports');
+        Schema::dropIfExists('sites');
     }
 }

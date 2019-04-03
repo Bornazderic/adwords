@@ -19,10 +19,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/download', 'HomeController@arrayCreate')->name('download');
-
+Route::get('pull/{id}', 'HomeController@pull')->name('pull');
 Route::get('index' , 'HomeController@index')->name('index');
 Route::delete('export/{id}' , 'HomeController@delete')->name('delete');
 

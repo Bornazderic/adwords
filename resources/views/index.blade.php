@@ -1,15 +1,20 @@
 @extends('layouts.app') 
 @section('content')
-@if(Session::has('success'))
-{
-    <p>{{Session::get('success')}}</p>
-}
-@endif
 <div class="container">
+        @if(Session::has('delete'))
+            <div class="alert alert-info">{{ Session::get('delete') }}</div>
+        @endif
     <div class="content">
+
 
         <form action="{{route('download')}}" method="POST">
             {{csrf_field()}}
+
+            <select name="site" class="target">
+                    @foreach ($sites as $site )
+                        <option value={{$site->id}}>{{$site->name}}</option>
+                    @endforeach
+               </select>
 
             <select name="category">
                 <option value="All">All</option>
@@ -43,22 +48,45 @@
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
-                <th scope="col">File name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Status</th>
                 <th scope="col">Type</th>
+                <th scope="col">Stock</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
         @foreach ($exports as $value)
             <tr>
-            <th scope="row">{{$value->date}}</th>
-                <td>{{$value->time}}</td>
-                <td>{{$value->file_name}}</td>
+            <th scope="row">{{$value->created_at->format('H:i:s')}}</th>
+                <td>{{$value->created_at->format('d.m.Y')}}</td>
+                <td>{{$value->category}}</td>
+                <td>{{$value->status}}</td>
                 <td>{{$value->type}}</td>
-            <td><form action="{{route('delete', ['id' => $value] )}}" method="POST">@method('DELETE') @csrf<button type="submit" class="btn btn-danger"><i class="fa fa-trash fa-xs"></i></button></form></td>
+                <td>{{$value->stock}}</td>
+            <td>
+            <form action="{{route('delete', ['id' => $value] )}}" method="POST">
+                @method('DELETE') 
+                @csrf
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-trash fa-xs"></i>
+                </button>
+
+                <a href="{{route('pull', ['id' => $value] )}}" class="btn btn-success">
+                        <i class="fa fa-download fa-xs"></i>
+                </a>
+            </form>
+           
             </tr>
         @endforeach
     </tbody>
     </table>
 </div>
+
+<script>
+        $(".target").change(function() {
+      alert( "Handler for .change() called." );
+    });
+    </script>
 @endsection
+
