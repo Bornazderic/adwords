@@ -34,13 +34,18 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-
+    public function index(Request $request)
     {
+        $site = $request->has('site') ? Site::findOrFail($request->site) : Site::first();
+        $wooCommerce =  $this->mojWooClient($site);
+ 
+
+      
      
         $exports = Exports::all();
         $sites = Site::all();
-        $categories = Woocommerce::get('products/categories', ['per_page' => 100]);
+        //$categories = Woocommerce::get('products/categories', ['per_page' => 100]);
+        $categories = $wooCommerce->get('products/categories', ['per_page' => 100]);
         $status = ['any', 'draft', 'pending', 'private', 'publish'];
         $stock = ['instock', 'outofstock', 'onbackorder'];
         $types = ['xlsx', 'csv', 'tsv', 'xls', 'html'];
@@ -61,6 +66,9 @@ class HomeController extends Controller
 
     public function arrayCreate(Request $request)
     {
+        $site = Site::findOrFail($request->site);
+        $wooCommerce = $this->mojWooClient($site);
+
         $page = 1;
         $products = [];
         $all_products = [];
@@ -69,7 +77,7 @@ class HomeController extends Controller
         do {
             try {
 
-                $products = Woocommerce::get('products', ['per_page' => 100, 'page' => $page, 'status' => $request->status, 'stock_status' => $request->stock]); //category = request cat
+                $products = $wooCommerce->get('products', ['per_page' => 100, 'page' => $page, 'status' => $request->status, 'stock_status' => $request->stock]); //category = request cat
             } catch (HttpClientException $e) {
                 die("Can't get products: $e");
             }
@@ -95,7 +103,6 @@ class HomeController extends Controller
                     } else continue;
             }
 
-         $this->neZnamDiGonim($site);
 
         $data = Exports::create([
             'user_id' => Auth::user()->id,
@@ -133,18 +140,18 @@ class HomeController extends Controller
         return Storage::download($file->file_name);
     }
 
-    public function neZnamDiGonim($site)
+    public function mojWooClient($site)
     {
         $client = new Client(
             $site->store_url,
             decrypt($site->consumer_key),
             decrypt($site->consumer_secret),
             [
-                'version' => 'wc/'.config('api_version'),
-                'verify_ssl' => config('verify_ssl'),
-                'wp_api' => config('wp_api'),
-                'query_string_auth' => config('query_string_auth'),
-                'timeout' => config('timeout'),
+                'version' => 'wc/'.config('woocommerce.api_version'),
+                'verify_ssl' => config('woocommerce.verify_ssl'),
+                'wp_api' => config('woocommerce.wp_api'),
+                'query_string_auth' => config('woocommerce.query_string_auth'),
+                'timeout' => config('woocommerce.timeout'),
             ]);
 
             return new WoocommerceClient($client);

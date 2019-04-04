@@ -10,11 +10,13 @@
         <form action="{{route('download')}}" method="POST">
             {{csrf_field()}}
 
-            <select name="site" class="target">
+<h1 id="spinner" style="display:none;">DELA</h1>
+   
+            <select name="site" onchange="this.options[this.selectedIndex].value && $('#spinner').show() && (window.location = '?site=' + this.options[this.selectedIndex].value);">
                     @foreach ($sites as $site )
-                        <option value={{$site->id}}>{{$site->name}}</option>
+                         <option value={{$site->id}} @if($site->id == request('site')) selected @endif >{{$site->name}}</option>
                     @endforeach
-               </select>
+               </select>        
 
             <select name="category">
                 <option value="All">All</option>
@@ -83,10 +85,5 @@
     </table>
 </div>
 
-<script>
-        $(".target").change(function() {
-      alert( "Handler for .change() called." );
-    });
-    </script>
 @endsection
 

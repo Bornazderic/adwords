@@ -19,14 +19,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'manuel@tempusmedia.hr',
             'password' => bcrypt('1q2w3e4r5t')
         ]);
-
-
-        $site = new \App\Site([
-            'name' => 'Nikas Staging',
-            'store_url' => 'http://staging.tempus.media',
-            'consumer_key' => encrypt('ck_fec70ccc608dffab43ac375587183f999d3a9122'),
-            'consumer_secret' => encrypt('cs_6608e2a6f5451b168cd1c64ca4d781c338831427'),
-        ]);
  
  
          $site2 = new \App\Site([
@@ -57,7 +49,6 @@ class DatabaseSeeder extends Seeder
              'consumer_secret' => encrypt('cs_687cd1e021dc08ff5327cd818ecdde336906925d'),
          ]);
 
-        $user->site()->save($site);
         $user->site()->save($site2);
         $user->site()->save($site3);
         $user->site()->save($site4);
